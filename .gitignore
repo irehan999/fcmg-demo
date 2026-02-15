@@ -1,0 +1,15 @@
+# Streamlit App .gitignore
+# Exclude large training data file
+train.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+
+# Streamlit
+.streamlit/secrets.toml
