@@ -724,19 +724,20 @@ with tab1:
         # --- Model Input Data (Transparency) ---
         with st.expander("🔍 See Raw Model Inputs (What we fed the AI)"):
             st.info("This table shows the exact features generated for the **first day** of the forecast. This proves the model considers holidays, oil prices, and recent sales history.")
-            # Generate sample features for the first date
+            # Generate sample features for the first date (derive from forecast results; 'dates' only exists inside button callback)
             from forecast_helper import prepare_forecast_features_batch
-            
-            sample_date = [dates[0]]
+
+            first_date = pd.to_datetime(forecasts_df['date'].min())
+            sample_date = [first_date]
             sample_features = prepare_forecast_features_batch(
                 selected_products, sample_date, datasets, model_info.get('features', [])
             )
-            
+
             # Select key columns to display (don't show all 46)
             cols_to_show = ['family', 'dayofweek', 'dcoilwtico', 'lag_1', 'lag_7', 'onpromotion', 'National_Holiday']
             # Filter columns that actually exist
             cols_to_show = [c for c in cols_to_show if c in sample_features.columns]
-            
+
             # Create readable version
             display_features = sample_features[cols_to_show].head(10).copy()
             column_map = {
@@ -749,9 +750,9 @@ with tab1:
                 'National_Holiday': 'Holiday Flag'
             }
             display_features = display_features.rename(columns=column_map)
-            
+
             st.dataframe(display_features, use_container_width=True)
-            st.caption(f"Showing raw inputs for {dates[0].strftime('%Y-%m-%d')}. Total features used: {len(sample_features.columns)}")
+            st.caption(f"Showing raw inputs for {first_date.strftime('%Y-%m-%d')}. Total features used: {len(sample_features.columns)}")
         
         # Integration with Route Optimization
         st.markdown("---")
